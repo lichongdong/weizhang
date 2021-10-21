@@ -1,0 +1,29 @@
+html,body {
+	height: 100%;
+	overflow: hidden;
+}
+.mui-bar {
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+#done.mui-disabled{
+	color: gray;
+}
+.container{
+	display:flex;
+	flex-direction:column;
+}
+section{
+	flex:1;
+	padding-top:2.75rem;
+}
+.mui-indexed-list-bar{
+	display:flex;
+	flex-direction:column;
+	height:100%;
+	padding-top:0.625rem;
+}
+.mui-indexed-list-bar > a{
+    flex:1;
+	line-height:1.875rem;
+}

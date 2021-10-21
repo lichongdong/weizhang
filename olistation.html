@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="css/mui.css" rel="stylesheet" />
+	<style>
+	  #olistation{
+		width:100vw!important;
+		height:100vh!important;
+	}
+	</style>
+</head>
+
+<body>
+<div id="olistation"></div>
+<script src="js/mui.js"></script>
+<script type="text/javascript">
+mui.init()
+mui.plusReady(function(){
+	// var mapsBox = document.getElementById('mapsBox');
+	
+	var mapObj = new plus.maps.Map('olistation');
+	//缩放
+	mapObj.setZoom(16);
+	//显示当前用户的位置为:中心
+	mapObj.isShowUserLocation(true);
+	//获取用户当前位置信息
+	mapObj.getUserLocation(function(state,point){
+		// console.log(JSON.stringify(state))
+		// console.log(JSON.stringify(point))//longitude 经度  维度 latitude
+		//创建point 对象
+		var center = new plus.maps.Point(point.longitude,point.latitude);
+		//设置地图中心点
+		mapObj.setCenter(center);
+		
+		//调用后台接口
+		mui.ajax('https://api.jisuapi.com/oilstation/nearby',{
+			dataType:'json',
+			data:{
+				appkey:'15b163096b822dbf',
+				lat:point.latitude,
+				lng:point.longitude,
+				range:3000,
+				num:20
+			},
+			success:function(data){
+				var result = data.result
+				for(var i=0;i<result.length;i++){
+					//创建地图标记mark 对象
+					var markObj = new plus.maps.Marker(new plus.maps.Point(result[i].lng,result[i].lat));
+					var bubble = new plus.maps.Bubble(result[i].name);
+				    markObj.setBubble(bubble);
+					markObj.setIcon("img/jy.png");
+					//添加操作
+					mapObj.addOverlay(markObj);
+					
+				}
+				
+				
+			}
+		})
+	});
+	
+})
+</script>
+</body>
+
+</html>

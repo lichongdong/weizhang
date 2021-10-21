@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<link href="css/mui.css" rel="stylesheet" />
+<link href="css/config.css" rel="stylesheet" />
+</head>
+<body>
+<header class="mui-bar mui-bar-nav">
+	<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	<h1 class="mui-title">设置</h1>
+</header>
+<section>
+	<ul class="mui-table-view">
+	    <li class="mui-table-view-cell">
+	        <a class="mui-navigate-right">用户服务协议</a>
+	    </li>
+	    <li class="mui-table-view-cell">
+	        <a class="mui-navigate-right">隐私政策</a>
+	    </li>
+	    <li class="mui-table-view-cell">
+	        <a class="mui-navigate-right">分享给朋友</a>
+	    </li>
+		<li class="mui-table-view-cell">
+		    <a class="mui-navigate-right">检查更新</a>
+		</li>
+	</ul>
+	<div class="button"  id="out">
+		<span>退出登录</span>
+	</div>
+</section>
+<script src="js/mui.js"></script>
+<script src="js/oauth.js"></script>
+<script type="text/javascript">
+mui.init()
+mui.plusReady(function(){
+	if(!localStorage.getItem('userInfo')){
+		document.getElementById('out').style.display = 'none';
+		return false;
+	}
+	mui('section').on('tap','#out',function(){
+		//先获取本地存储的数据
+		var userInfo = JSON.parse(localStorage.getItem('userInfo'));
+		var obj = oauth.fFilterOauth(userInfo.id);
+		// console.log(JSON.stringify(userInfo))
+		// 退出登录
+		obj.logout(function(){
+			//本地存储清空数据
+			localStorage.removeItem('userInfo');
+			//定义事件
+			var my = plus.webview.getWebviewById('my.html');
+			mui.fire(my,'refresh');
+			//返回上一页
+			mui.back();
+			mui.toast('退出成功');
+		}, function(){
+			mui.toast('退出登录失败,请重试')
+		})
+	})
+})
+</script>
+</body>
+</html>

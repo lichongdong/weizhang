@@ -1,0 +1,86 @@
+.container{
+	display:flex;
+	flex-direction: column;
+}
+header{
+	width:100%;
+	height:12.5rem;
+	background-color:#715273;
+	display:flex;
+	flex-direction:column;
+}
+.shezhi{
+	padding-top:1.25rem;
+	padding-left:1.25rem;
+}
+.shezhi i{
+	font-size:1.5625rem;
+	color:white;
+}
+.portrait{
+	display:flex;
+	flex:1;
+	align-items:center;
+	padding:1.875rem 1.25rem;
+}
+.portrait img{
+	width:80px;
+	height:80px;
+	border-radius:50%;
+.}
+.portrait .login{
+	padding:1.25rem;;
+	color:#fff
+}
+.portrait .login div:nth-child(1){
+	font-size:1.25rem;
+	padding:0.625rem 0;
+}
+.portrait .login div:nth-child(2){
+	font-size:0.9375rem;
+	padding:0.3125rem;
+	background-color: #9E869F;
+	border-radius:1.25rem;
+}
+section{
+	padding:1.25rem 1.25rem;
+}
+section ul{
+	margin-top:1.875rem;
+	display:flex;
+}
+section ul li{
+	width:25%;
+	display:flex;
+	flex-direction:column;
+	text-align:center;
+}
+section ul li i {
+	font-size:1.875rem!important;
+	padding:1.25rem 0;
+}
+.login-main{
+    height:30%;	
+}
+.login-wrap{
+	height:100%;
+	background-color:white;
+	padding:2.1875rem 0;
+	border-radius:0.3125rem 0.3125rem 0 0;
+}
+.login-wrap ul{
+	display:flex;
+	justify-content:space-around
+}
+.login-wrap ul li{
+	display:flex;
+	flex-direction:column;
+	align-items:center;
+}
+.login-wrap ul li span {
+	padding-top:0.625rem;
+}
+.login-wrap ul li img{
+	width:32px;
+	height:32px;
+}

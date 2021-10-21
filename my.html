@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<link href="css/mui.css" rel="stylesheet" />
+<link href="css/common.css" rel="stylesheet" />
+<link href="css/iconfont.css" rel="stylesheet" />
+<link href="css/my.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+<header>
+	<div class="shezhi" >
+		<i class="iconfont icon-shezhi" id="config"></i>
+	</div>
+	<a  href="#login" id="popoverLogin">
+		<div class="portrait">
+			<img src="./img/portrait.png" id="img"/>
+			<div class="login">
+				<div id="userName">登录/注册</div>
+				<div>老用户手机号登录找回车辆</div>
+			</div>
+		</div>
+	</a>
+</header>
+<section>
+	<h3>个人服务</h3>
+	<ul>
+		<li id="addVehicle">
+			<i class="iconfont icon-cheliang"></i>
+			<span>我的车辆</span>
+		</li>
+		<li id="addDrivinglicense">
+			<i class="iconfont icon-jiazhao"></i>
+			<span>我的驾照</span>
+		</li>
+	</ul>
+</section>
+<!-- 登录弹出层 -->
+<div id="login" class="login-main mui-popover mui-popover-action mui-popover-bottom">
+  <div class="login-wrap">
+	  <ul>
+		  <li class="oauth" id="weixin">
+			  <img src="./img/weixin.png" />
+			  <span>微信登录</span>
+		  </li>
+		  <li class="oauth" id="qq">
+			  <img src="./img/qq.png" />
+			  <span>QQ登录</span>
+		  </li>
+		  <li class="oauth" id="sinaweibo">
+			  <img src="./img/sinaweibo.png" />
+			  <span>微博登录</span>
+		  </li>
+	  </ul>
+  </div>
+</div>
+<script src="js/mui.js"></script>
+<script src="./js/oauth.js"></script>
+<script type="text/javascript">
+mui.init()
+mui.plusReady(function () {
+	window.addEventListener('refresh',function(){
+		location.reload();
+	})
+	// localStorage.clear()
+	//一进来就获取本地存储信息
+	var getUserInfo = JSON.parse(localStorage.getItem('userInfo'));
+	// console.log(JSON.stringify(getUserInfo))
+	if(getUserInfo){
+		document.getElementById('img').src = getUserInfo.headimgurl;
+		document.getElementById('userName').innerHTML = getUserInfo.nickname;
+		document.getElementById('popoverLogin').href = "javascript:;";
+	}else{
+		document.getElementById('popoverLogin').href = "#login";
+	}
+   //第三方一键登录
+   mui('body').on('tap','.oauth',function(){
+	   //获取id
+	   id = this.id;
+	   var obj = oauth.fFilterOauth(id);
+	    // console.log(JSON.stringify(obj))
+		obj.login(function(){
+			obj.getUserInfo(function(data){
+				var userInfo = data.target.userInfo;
+				//设置id  是哪一种方式登录的
+				userInfo.id = id;
+				//持久化本地存储
+				localStorage.setItem('userInfo',JSON.stringify(userInfo));
+				document.getElementById('img').src = userInfo.headimgurl;
+				document.getElementById('userName').innerHTML = userInfo.nickname;
+				//成功登录后设置不能点击状态
+				document.getElementById('popoverLogin').href = "javascript:;";
+				//关闭登录弹出层
+				mui('#login').popover('hide');
+			}, function(){
+				mui.toast("获取用户信息失败")
+			})
+			mui.toast("登录成功")
+		}, function(){
+			mui.toast("登录失败")
+		})
+   })
+   //跳转到设置页面
+   mui('header').on('tap','#config',function(){
+	   mui.openWindow({
+		   url:'config.html',
+		   id:'config'
+	   })
+   })
+   //我的驾照页面
+   mui('section').on('tap','#addDrivinglicense',function(){
+	   if(  localStorage.getItem('drivinglicense')  ){
+	   			//跳转到列表页
+	   			mui.openWindow({
+	   				url:'listDrivinglicense.html',
+	   				id:'listDrivinglicense'
+	   			})
+	   		}else{
+	   			//跳转到添加页面
+	   			mui.openWindow({
+	   				url:'addDrivinglicense.html',
+	   				id:'addDrivinglicense'
+	   			})
+	   		}
+   })
+   //我的车辆
+   mui('section').on('tap','#addVehicle',function(){
+	   mui.openWindow({
+		   url:'addVehicle.html',
+		   id:'addVehicle'
+	   })
+   })
+})
+</script>
+</body>
+
+</html>

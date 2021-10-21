@@ -1,0 +1,8 @@
+.container{
+	display:flex;
+	flex-direction:column;
+}
+section{
+	flex:1;
+	height:100%;
+}

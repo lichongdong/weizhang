@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+<link href="css/mui.min.css" rel="stylesheet" />
+<link href="css/common.css" rel="stylesheet" />
+<link href="css/home.css" rel="stylesheet" />
+<link href="css/iconfont.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+<header>
+	<div class="header">
+		<div id="cityList">
+		<span id="city"></span>
+		<i class="iconfont icon-arrow-down"></i>
+		</div>
+		<h3>违章查询</h3>
+		<div>
+		<i class="iconfont icon-hao"></i>
+		</div>
+	</div>
+	<div class="main-day">
+		<div class="weather">
+			<div id="temp"></div>
+			<div>
+				<span id="weather"></span>
+				<i class="mui-icon mui-icon-spinner-cycle mui-spin"></i>
+			</div>
+			<div id="index"></div>
+		</div>
+		<div class="limitation">
+			<div>今日限行</div>
+			<div id='dateLimit'></div>
+		    <div id='week'></div>
+		</div>
+	</div>
+</header>
+<section>
+	<div class="add-icon">
+		<i class="iconfont icon-jiahao-copy"></i>
+	</div>
+	<ul>
+		<li id="high">
+			<img src="./img/wz.png" alt="" />
+			<span>违章高发地</span>
+		</li>
+		<li id="traffic">
+			<img src="./img/lk.png" alt="" />
+			<span>实时路况</span>
+		</li>
+		<li>
+			<img src="./img/xj.png" alt="" />
+			<span>新车询价</span>
+		</li>
+		<li id="station">
+			<img src="./img/jy.png" alt="" />
+			<span>加油站</span>
+		</li>
+	</ul>
+</section>
+</div>
+<script src="js/mui.js"></script>
+<script src="js/home.js"></script>
+<script type="text/javascript">
+mui.init()
+mui.plusReady(function () {
+	//实时路况
+	mui('section').on('tap','#traffic',function(){
+		mui.openWindow({
+			url:'traffic.html',
+			id:'traffic'
+		})
+	})
+	//附近加油站
+	mui('section').on('tap','#station',function(){
+		mui.openWindow({
+			url:'station.html',
+			id:'station'
+		})
+	})
+	//违章高发地
+	mui('section').on('tap','#high',function(){
+		mui.openWindow({
+			url:'high.html',
+			id:'high'
+		})
+	})
+	//获取当前城市
+	home.init(function(data){
+		// console.log(JSON.stringify(data))
+		document.getElementById('city').innerHTML = data.cityname;
+		fWeather(data.cityname)
+		//执行限行接口
+		fGetCityLimit(data.cityname)
+	})
+	//2021-09-04格式
+	function fGetDate(){
+		var swperator  = '-'
+		var date = new Date();
+		var year = date.getFullYear();
+	    var month = date.getMonth()+1;
+		var day = date.getDate();
+		if(month >=1 && month <= 9){
+			month = "0"+ month
+		}
+		if(day >=1 && day <=9){
+			day = "0"+ day
+		}
+		var currentDate = year + swperator + month + swperator + day;
+		return currentDate;
+	}
+	//请求限行接口
+	function fGetCityLimit(cityname){
+		mui.ajax('https://api.jisuapi.com/vehiclelimit/query',{
+			dataType:'json',
+			data:{
+				appkey:'15b163096b822dbf',
+				city:cityname,
+				date:fGetDate()
+			},
+			success:function(data){
+				// console.log(JSON.stringify(data))
+				var result = data.result;
+				var num = result.number.replace('和','|');
+				document.getElementById('dateLimit').innerHTML = num;
+				document.getElementById('week').innerHTML = result.week;
+			}
+		})
+	}
+	//请求天气预报接口
+	function fWeather(cityName){
+		mui.ajax('https://api.jisuapi.com/weather/query',{
+			dataType:'json',
+			data:{
+				appkey:'15b163096b822dbf',
+				city:cityName
+			},
+			success:function(data){
+				var result = data.result;
+				// console.log(JSON.stringify(result))
+				// result.temphigh //最高气温
+				// result.templow //最低温度
+				// result.weather //天气
+				 // result.index[4].iname  result.index[4].ivalue 生活指数
+				 //晴天还是雨天
+				 document.getElementById('weather').innerHTML = result.weather;
+				 //当前温度
+				 document.getElementById('temp').innerHTML = `
+				 ${result.templow}~${result.temphigh}°C
+				 `;
+				 //洗车指数
+				document.getElementById('index').innerHTML = `${result.index[4].iname}:${result.index[4].ivalue}`;
+			}
+		})
+	}
+
+    mui('body').on('tap','#cityList',function(){
+		mui.openWindow({
+			url:'city.html',
+			id:'city',
+			show:{
+				autoShow:true
+			},
+			waiting:{
+				autoShow:true,
+				title:'正在加载....'
+			}
+		})
+	})
+	window.addEventListener('cityName',function(event){
+		// alert(event.detail.cityName)
+		var cityName = event.detail.cityName;
+		document.getElementById('city').innerHTML = cityName;
+		fWeather(cityName);//请求天气预报数据
+		//执行限行接口
+		fGetCityLimit(data.cityname)
+	})
+	
+})
+</script>
+</body>
+
+</html>

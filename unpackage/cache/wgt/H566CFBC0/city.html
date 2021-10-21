@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<link href="css/mui.css" rel="stylesheet" />
+<link href="css/common.css" rel="stylesheet" />
+<link href="css/city.css" rel="stylesheet" />
+<link href="css/mui.indexedlist.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+<header class="mui-bar mui-bar-nav">
+	<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	<h1 class="mui-title">选择城市</h1>
+</header>
+<section>
+	<div class="mui-content">
+		<div id='list' class="mui-indexed-list">
+			<div class="mui-indexed-list-search mui-input-row mui-search">
+				<input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="搜索机场" style="display:none;">
+			</div>
+			<div class="mui-indexed-list-bar">
+				
+			</div>
+			<div class="mui-indexed-list-alert"></div>
+			<div class="mui-indexed-list-inner">
+				<div class="mui-indexed-list-empty-alert">没有数据</div>
+				<ul class="mui-table-view">
+				</ul>
+			</div>
+		</div>
+	</div>
+</section>
+</div>
+<script src="js/mui.min.js"></script>
+<script src="js/mui.indexedlist.js"></script>
+<script type="text/javascript">
+mui.init()
+mui.plusReady(function(){
+	
+	var arr = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+	var objCity = {}
+	//调用所有城市的数据
+	mui.ajax('https://api.jisuapi.com/vehiclelimit/city',{
+		dataType:'json',
+		data:{
+			 appkey:'15b163096b822dbf'
+		},
+		success:function(data){
+			// console.log(JSON.stringify(data))
+			var result = data.result;
+			for(var i=0;i<arr.length;i++){
+				for(var j=0;j<result.length;j++){
+					// console.log(result[j].city[0])
+					if( arr[i] === result[j].city[0]){
+						var key = arr[i].toUpperCase();//转换为大写字母
+						// console.log(objCity[key]);
+						if(!objCity[key]){
+							objCity[key] = [
+								result[j]
+							]
+						}else{
+							objCity[key].push(result[j]);
+						}
+					}
+				}
+			}
+			// console.log(JSON.stringify(objCity))
+			//渲染数据
+			mui.each(objCity,function(index,item){
+			//右侧数ABC据
+			document.querySelector('.mui-indexed-list-bar').innerHTML += '<a>'+index+'</a>';
+			//左侧城市列表
+			document.querySelector('.mui-table-view').innerHTML += `
+			  <li data-group="${index}" class="mui-table-view-divider mui-indexed-list-group">${index}</li>
+			  `;
+			  for(var k=0;k<item.length;k++){
+				  document.querySelector('.mui-table-view').innerHTML += `
+				   <li data-value="${objCity[index][k].city}" data-tags="AKeSu" class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
+				   	<input type="checkbox" />${objCity[index][k].cityname}</li>
+				  `;
+			  }
+			})
+	
+		}
+	})
+	var header = document.querySelector('header.mui-bar');
+	var list = document.getElementById('list');
+	//calc hieght
+	list.style.height = (document.body.offsetHeight - header.offsetHeight) + 'px';
+	//create
+	window.indexedList = new mui.IndexedList(list);
+
+    var header = document.querySelector('header.mui-bar');
+	var list = document.getElementById('list');
+	var done = document.getElementById('done');
+	//calc hieght
+	list.style.height = (document.body.offsetHeight - header.offsetHeight) + 'px';
+	//create
+	window.indexedList = new mui.IndexedList(list);
+	mui('.mui-indexed-list-inner').on('change', 'input', function() {
+		var text = this.parentNode.innerText
+		//首页的 pages[i] 已经等于home.html
+		var home = plus.webview.getWebviewById('home.html');
+		//自定义事件
+		mui.fire(home,'cityName',{
+			cityName:text
+		})
+		mui.back();
+	});
+})
+</script>
+</body>
+
+</html>
